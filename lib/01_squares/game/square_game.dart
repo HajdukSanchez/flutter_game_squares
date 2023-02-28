@@ -17,7 +17,7 @@ class SquareGame extends FlameGame with DoubleTapDetector, TapDetector {
 
   /// Debug mode show information of each component on user screen
   @override
-  bool get debugMode => true;
+  bool get debugMode => false;
 
   /// Text rendering default style
   final textPaint = TextPaint(
