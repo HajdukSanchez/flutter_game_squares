@@ -15,13 +15,25 @@ class SquareGame extends FlameGame with DoubleTapDetector, TapDetector {
   /// Handle engine running or not
   bool running = true;
 
+  /// Debug mode show information of each component on user screen
+  @override
+  bool get debugMode => true;
+
+  /// Text rendering default style
+  final textPaint = TextPaint(
+    style: const TextStyle(
+      fontSize: 14,
+      fontFamily: 'Awesome Font',
+    ),
+  );
+
   @override
   void onTapUp(TapUpInfo info) {
     super.onTapUp(info);
 
     // Points touched by user
     final touchPoint = info.eventPosition.game;
-    // Validate if some component on the scnree is handle or not
+    // Validate if some component on the screen is handle or not
     final handle = children.any((component) {
       if (component is Square && component.containsPoint(touchPoint)) {
         // Move velocity vector into opposite direction
@@ -42,6 +54,18 @@ class SquareGame extends FlameGame with DoubleTapDetector, TapDetector {
     // Pause or resume game
     running ? pauseEngine() : resumeEngine();
     running = !running;
+  }
+
+  @override
+  void render(Canvas canvas) {
+    super.render(canvas);
+
+    // Show on the top left of the screen the number of components active
+    textPaint.render(
+      canvas,
+      'Objects active: ${children.length}',
+      Vector2(20, 50),
+    );
   }
 
   // Add new square into screen
