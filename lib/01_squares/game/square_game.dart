@@ -60,7 +60,7 @@ class SquareGame extends FlameGame with DoubleTapDetector, TapDetector {
   void render(Canvas canvas) {
     super.render(canvas);
 
-    // Show on the top left of the screen the number of components active
+    // Show text at the top left of the screen the number of components active
     textPaint.render(
       canvas,
       'Objects active: ${children.length}',
