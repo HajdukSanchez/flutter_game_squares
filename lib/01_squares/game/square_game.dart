@@ -1,3 +1,6 @@
+import 'dart:math';
+
+import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
 import 'package:flame/palette.dart';
@@ -45,7 +48,7 @@ class SquareGame extends FlameGame with DoubleTapDetector, TapDetector {
 
     // If there is not a square in the screen points user tap
     if (!handle) {
-      _addNewSquare(touchPoint);
+      _addNewSquare();
     }
   }
 
@@ -68,18 +71,55 @@ class SquareGame extends FlameGame with DoubleTapDetector, TapDetector {
     );
   }
 
+  @override
+  void update(double dt) {
+    super.update(dt);
+
+    // Validate which components are out of the screen boundaries to delete it
+    for (var component in children) {
+      if (component is Square) {
+        if (_componentIsOutOfScreen(component)) {
+          // Remove component from Memory when his position is out of the screen
+          remove(component);
+        }
+      }
+    }
+  }
+
   // Add new square into screen
-  _addNewSquare(Vector2 touchPoint) {
+  _addNewSquare() {
     final squareColor = BasicPalette.white.paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2;
     // Square to add
     final newSquare = Square(
       squareSize: 45.0,
-      velocity: Vector2(0, 1).normalized() * 25,
       color: squareColor,
-    )..position = touchPoint;
+      velocity: _getRandomVelocity(),
+    )..position = _getRandomPosition();
     // Add the new component into the game screen
     add(newSquare);
+  }
+
+  // Random position vector
+  Vector2 _getRandomPosition() => Vector2(
+      _getRandomNumber(size.x.round()), _getRandomNumber(size.y.round()));
+
+  // Random velocity vector
+  Vector2 _getRandomVelocity() =>
+      Vector2.random().normalized() * _getRandomNumber(100);
+
+  // Get a random number
+  double _getRandomNumber(int max) => Random().nextInt(max).toDouble();
+
+  // Validate if a position of component is out of boundaries
+  bool _componentIsOutOfScreen(PositionComponent component) {
+    if (component.position.x > (size.x + (component.size.x / 2)) ||
+        component.position.x < (0 - (component.size.x / 2)) ||
+        component.position.y > (size.y + (component.size.y / 2)) ||
+        component.position.y < (0 - (component.size.y / 2))) {
+      return true;
+    }
+    return false;
   }
 }
